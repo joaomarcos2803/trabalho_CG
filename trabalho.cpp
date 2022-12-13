@@ -21,7 +21,7 @@
 
 /* Globals */
 /** Window width. */
-int win_width  = 800;
+int win_width  = 900;
 /** Window height. */
 int win_height = 700;
 
@@ -49,7 +49,10 @@ float light = 0;
 
 /** move cube*/
 float inY = 0;
-float inX = 0;
+float inX = -1;
+
+/** move cube*/
+float scale = 0;
 
 /** Vertex shader. */
 const char *vertex_code = "\n"
@@ -130,11 +133,12 @@ void display()
     glLineWidth(10);
 	glm::mat4 Rx = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), glm::vec3(1.0f,0.0f,0.0f));
 	glm::mat4 Ry = glm::rotate(glm::mat4(1.0f), glm::radians(65.0f), glm::vec3(0.0f,1.0f,0.0f));
-	glm::mat4 model = Rx*Ry;
+    glm::mat4 S = glm::scale(glm::mat4(1.0f), glm::vec3(1 + scale, 1 + scale, 1.0));
+	glm::mat4 model = S*Rx*Ry;
 	unsigned int loc = glGetUniformLocation(program, "model");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model));
 
-	glm::mat4 projection = glm::perspective(glm::radians(zoom + 90.0f), (win_width/(float)win_height), 0.1f, 120.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(zoom + 60.0f), (win_width/(float)win_height), 0.1f, 120.0f);
  	loc = glGetUniformLocation(program, "projection");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -189,7 +193,7 @@ void display()
             b[j] = 1.0f;
         }
     }
-
+    
     //primeiro cubo que irá começar a BFS/DFS
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + -1.5f, inY + 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
@@ -370,7 +374,8 @@ void keyboard(unsigned char key, int x, int y)
 void idle()
 {   
     if (animation && i < 10)
-    {
+    {   
+        scale = 0.115;
         i++;
         sleep(1);
     }
@@ -378,6 +383,7 @@ void idle()
     {
         animation = 0;
         i = 0;
+        scale = 0;
     }
     glutPostRedisplay();
 }
@@ -453,7 +459,7 @@ void initData()
         -0.75f, -1.8f,  -1.5f,  0.0f, -1.0f,  0.0f,
 
         0.25f, 0.25f, -0.25f,  0.0f, -1.0f,  0.0f,
-        -0.75f, 1.8f,  -1.5f,  0.0f, -1.0f,  0.0f,
+        -0.525f, 1.8f,  -1.5f,  0.0f, -1.0f,  0.0f,
 
         0.25f, -0.25f, -0.25f,  0.0f, -1.0f,  0.0f,
         -0.75f, 0.0f,  -1.5f,  0.0f, -1.0f,  0.0f,
