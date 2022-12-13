@@ -1,5 +1,5 @@
 /**
- * @file phong.cpp
+ * @file trabalho.cpp
  * Applies the Phong method.
  * 
  * @author Adriano Lucas Ferreira
@@ -31,15 +31,11 @@ int program;
 unsigned int VAO;
 /** Vertex buffer object. */
 unsigned int VBO;
-/** Vertex array object. */
-unsigned int VAO1;
-/** Vertex buffer object. */
-unsigned int VBO1;
-/** Element buffer object */
-unsigned int EBO;
+
 
 /* variaveis para as cores dos cubos */
 float r[10], g[10], b[10];
+
 int i = 0;
 int animation = 0;
 
@@ -155,10 +151,37 @@ void display()
     loc = glGetUniformLocation(program, "cameraPosition");
     glUniform3f(loc, 0.0, 0.0, 0.0);
 
-    //cor original
-    //glUniform3f(locColor, 0.1, 0.1, 0.5);
+    // Object color.
+    unsigned int locColor = glGetUniformLocation(program, "objectColor");
 
-    if (animation == 0)
+    unsigned int locView = glGetUniformLocation(program, "view");
+
+    //indices dos cubos para fazer a animação de cada algoritmo
+    int BFS[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int DFS[10] = {0, 1, 4, 7, 2, 5, 8, 3, 6, 9};
+
+    //DFS
+    if (animation == 1)
+    {
+        for (int j = 0; j <= i; j++)
+        {
+            r[DFS[j]] = 0.0f;
+            g[DFS[j]] = 1.0f;
+            b[DFS[j]] = 0.0f;
+        }
+    }
+    
+    //BFS
+    else if (animation == 2)
+    {
+        for (int j = 0; j <= i; j++)
+        {
+            r[BFS[j]] = 0.0f;
+            g[BFS[j]] = 1.0f;
+            b[BFS[j]] = 0.0f;
+        }   
+    }
+    else 
     {
         for (int j = 0; j < 10; j++)
         {
@@ -167,30 +190,19 @@ void display()
             b[j] = 1.0f;
         }
     }
-    else
-    {
-        for (int j = 0; j <= i; j++)
-        {
-            r[j] = 0.0f;
-            g[j] = 1.0f;
-            b[j] = 0.0f;
-        }
-    }
     
-    // Object color.
-    unsigned int locColor = glGetUniformLocation(program, "objectColor");
+    //ordem da BFS - 0 1 2 3 4 5 6 7 8 9
+    //ordem da DFS - 0 1 4 7 2 5 8 3 6 9
 
-    unsigned int locView = glGetUniformLocation(program, "view");
-
-    //primeiro cubo que irá começar a BFS
+    //DFS:
+    //primeiro cubo que irá começar a BFS/DFS
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + -1.5f, inY + 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[0], g[0], b[0]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     
-    
 
-    //cubos que são vizinhos do primeiro cubo
+    //Primeira coluna de cubos
     view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 0.0f, inY + 2.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[1], g[1], b[1]);
@@ -211,7 +223,7 @@ void display()
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDrawArrays(GL_LINES, 39, 2);
 
-    //cubos que são vizinhos dos vizinhos do primeiro cubo
+    //Segunda coluna de cubos
     view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 1.5f, inY + 2.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[4], g[4], b[4]);
@@ -291,10 +303,18 @@ void keyboard(unsigned char key, int x, int y)
         case 'Q':
             glutLeaveMainLoop();
 
-        case 'j':
-        case 'J':
+        //BFS
+        case 'n':
+        case 'N':
             animation = 1;
             break;
+        
+        //DFS
+        case 'm':
+        case 'M':
+            animation = 2;
+            break;
+
         //Zoom camera
         case 'z':
         case 'Z':
@@ -305,6 +325,7 @@ void keyboard(unsigned char key, int x, int y)
         case 'X':
             zoom += 2;
             break;
+
         //Rodar o cubo ao redor dele mesmo    
         case 'r':
         case 'R':
@@ -315,6 +336,7 @@ void keyboard(unsigned char key, int x, int y)
         case 'T':
             selfRotate -= 2;
             break;
+
         //Seta a posição inicial dos cubos
         case 'p':
         case 'P':
@@ -324,15 +346,16 @@ void keyboard(unsigned char key, int x, int y)
             inX = 0;
             inY = 0;
             break;
+
         //Movimentar os cubos na tela
         case 'w':
         case 'W':
-            inY -= 0.5;
+            inY += 0.5;
             break;
 
         case 's':
         case 'S':
-            inY += 0.5;
+            inY -= 0.5;
             break;
 
         case 'a':
@@ -344,6 +367,7 @@ void keyboard(unsigned char key, int x, int y)
         case 'D':
             inX += 0.5;
             break;
+
         //Light control
         case 'l':
         case 'L':
@@ -467,9 +491,9 @@ void initData()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
+
     // Unbind Vertex Array Object.
     glBindVertexArray(0);
-    
     
     glEnable(GL_DEPTH_TEST);
 }

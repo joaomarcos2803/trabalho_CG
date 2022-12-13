@@ -1,5 +1,3 @@
-# Martins's Makefile
-
 CC = g++
 CFLAGS = -pedantic-errors -Wall -g
 LDFLASGS = -lglut -lGLEW -lGL
