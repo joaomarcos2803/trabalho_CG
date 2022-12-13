@@ -330,7 +330,7 @@ void keyboard(unsigned char key, int x, int y)
         case 'P':
             zoom = 0;
             light = 0; 
-            inX = 0;
+            inX = -1.0;
             inY = 0;
             break;
 
