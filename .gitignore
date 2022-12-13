@@ -1,0 +1,5 @@
+#files must be ignored
+*.exe
+*.o
+#paths must be ignored
+.vscode

@@ -2,7 +2,10 @@
  * @file phong.cpp
  * Applies the Phong method.
  * 
- * @author Ricardo Dutra da Silva
+ * @author Adriano Lucas Ferreira
+ * @author Carlos Eduardo da Cruz Brito
+ * @author Matheus Martins Batista
+ * @author João Marcos Cucovia
  */
 
 #include <stdio.h>
@@ -30,9 +33,18 @@ unsigned int VAO;
 unsigned int VBO;
 
 /* variaveis para as cores dos cubos */
-float r[7], g[7], b[7];
+float r[10], g[10], b[10];
 int i = 0;
 int animation = 0;
+
+/** Zoom camera */
+float zoom = 0;
+
+/** rotate cube*/
+float selfRotate = 0;
+
+/** light in cube*/
+float light = 0;
 
 /** Vertex shader. */
 const char *vertex_code = "\n"
@@ -105,19 +117,19 @@ void initShaders(void);
  */
 void display()
 {
-    glClearColor(0.2, 0.3, 0.3, 1.0);
+    glClearColor(0.4, 0.3, 0.3, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(program);
     glBindVertexArray(VAO);
 
-	glm::mat4 Rx = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), glm::vec3(1.0f,0.0f,0.0f));
-	glm::mat4 Ry = glm::rotate(glm::mat4(1.0f), glm::radians(-30.0f), glm::vec3(0.0f,1.0f,0.0f));
+	glm::mat4 Rx = glm::rotate(glm::mat4(1.0f), glm::radians(selfRotate + 10.0f), glm::vec3(1.0f,0.0f,0.0f));
+	glm::mat4 Ry = glm::rotate(glm::mat4(1.0f), glm::radians(selfRotate + -30.0f), glm::vec3(0.0f,1.0f,0.0f));
 	glm::mat4 model = Rx*Ry;
 	unsigned int loc = glGetUniformLocation(program, "model");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model));
 
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (win_width/(float)win_height), 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(zoom + 80.0f), (win_width/(float)win_height), 0.1f, 120.0f);
  	loc = glGetUniformLocation(program, "projection");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -127,7 +139,7 @@ void display()
 
     //Light position.
     loc = glGetUniformLocation(program, "lightPosition");
-    glUniform3f(loc, 1.0, 3.0, 2.0);
+    glUniform3f(loc, light + 1.0, light + 3.0, light + 2.0);
     	
     // Camera position.
     loc = glGetUniformLocation(program, "cameraPosition");
@@ -138,7 +150,7 @@ void display()
 
     if (animation == 0)
     {
-        for (int j = 0; j < 7; j++)
+        for (int j = 0; j < 10; j++)
         {
             r[j] = 0.0f;
             g[j] = 0.0f;
@@ -198,6 +210,22 @@ void display()
     glUniform3f(locColor, r[6], g[6], b[6]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
+    //Terceira coluna de cubos
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 1.0f, -5.0f));
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, r[7], g[7], b[7]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.0f, -5.0f));
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, r[8], g[8], b[8]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, -1.0f, -5.0f));
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, r[9], g[9], b[9]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
     glutSwapBuffers();
 }   
 
@@ -233,13 +261,42 @@ void keyboard(unsigned char key, int x, int y)
     {
         case 27:
             glutLeaveMainLoop();
+
         case 'q':
         case 'Q':
             glutLeaveMainLoop();
+
         case 'j':
         case 'J':
             animation = 1;
-        
+            break;
+
+        case 'z':
+        case 'Z':
+            zoom += 2;
+            break;
+
+        case 'x':
+        case 'X':
+            zoom -= 2;
+            break;
+        case 'r':
+        case 'R':
+            selfRotate += 2;
+            light += 0.5;
+            break;
+
+        case 't':
+        case 'T':
+            selfRotate -= 2;
+            light -= 0.5;
+            break;
+        case 'p':
+        case 'P':
+            zoom = 0;
+            light = 0; 
+            selfRotate = 0;
+            break;
     }
     glutPostRedisplay();   
 }
@@ -247,12 +304,12 @@ void keyboard(unsigned char key, int x, int y)
 
 void idle()
 {   
-    if (animation && i < 7)
+    if (animation && i < 10)
     {
         i++;
-        sleep(3);
+        sleep(1);
     }
-    if (i > 6)
+    if (i > 9)
     {
         animation = 0;
         i = 0;

@@ -1,9 +1,30 @@
+# Martins's Makefile
+
 CC = g++
+CFLAGS = -pedantic-errors -Wall -g
+LDFLASGS = -lglut -lGLEW -lGL
 
-GLLIBS = -lglut -lGLEW -lGL
+FONTES = $(wildcard *.cpp)
 
-all: trabalho.cpp
-	$(CC) trabalho.cpp ./lib/utils.cpp -o trabalho $(GLLIBS)
+LOCALLIB = ./lib/utils.cpp
+
+OBJETOS = $(FONTES:.cpp=.o)
+
+EXECUTAVEL = main.exe
+
+all: $(EXECUTAVEL)
+	./$(EXECUTAVEL)
+
+$(EXECUTAVEL) : $(OBJETOS) $(LOCALLIB)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLASGS) 
+
+%.o: %.cpp
+	$(CC) -c $(CFLAGS) $^
 
 clean:
-	rm -f trabalho
+	rm -r *.o
+
+rmproper: clean
+	rm -r $(EXECUTAVEL)
+
+run: $(EXECUTAVEL)
