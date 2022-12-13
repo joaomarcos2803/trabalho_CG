@@ -14,7 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include "./lib/utils.h"
-#include <time.h>
+#include <unistd.h>
 
 /* Globals */
 /** Window width. */
@@ -29,6 +29,10 @@ unsigned int VAO;
 /** Vertex buffer object. */
 unsigned int VBO;
 
+/* variaveis para as cores dos cubos */
+float r[7], g[7], b[7];
+int i = 0;
+int animation = 0;
 
 /** Vertex shader. */
 const char *vertex_code = "\n"
@@ -132,50 +136,66 @@ void display()
     //cor original
     //glUniform3f(locColor, 0.1, 0.1, 0.5);
 
+    if (animation == 0)
+    {
+        for (int j = 0; j < 7; j++)
+        {
+            r[j] = 0.0f;
+            g[j] = 0.0f;
+            b[j] = 1.0f;
+        }
+    }
+    else
+    {
+        for (int j = 0; j <= i; j++)
+        {
+            r[j] = 0.0f;
+            g[j] = 1.0f;
+            b[j] = 0.0f;
+        }
+    }
+    
     // Object color.
     unsigned int locColor = glGetUniformLocation(program, "objectColor");
 
     unsigned int locView = glGetUniformLocation(program, "view");
 
-
     //primeiro cubo que irá começar a BFS
-
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(locColor, 0.0, 1.0, 1.0);
+    glUniform3f(locColor, r[0], g[0], b[0]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-
 
     //cubos que são vizinhos do primeiro cubo
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
-	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(locColor, 1.0, 1.0, 0.0);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
     view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(locColor, 1.0, 1.0, 0.0);
+    glUniform3f(locColor, r[1], g[1], b[1]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, r[2], g[2], b[2]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(locColor, 1.0, 1.0, 0.0);
+    glUniform3f(locColor, r[3], g[3], b[3]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     //cubos que são vizinhos dos vizinhos do primeiro cubo
     view = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 1.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(locColor, 0.1, 0.1, 0.5);
+    glUniform3f(locColor, r[4], g[4], b[4]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     view = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(locColor, 0.1, 0.1, 0.5);
+    glUniform3f(locColor, r[5], g[5], b[5]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     view = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, -1.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(locColor, 0.1, 0.1, 0.5);
+    glUniform3f(locColor, r[6], g[6], b[6]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     glutSwapBuffers();
@@ -216,11 +236,29 @@ void keyboard(unsigned char key, int x, int y)
         case 'q':
         case 'Q':
             glutLeaveMainLoop();
+        case 'j':
+        case 'J':
+            animation = 1;
+        
     }
-    
-	glutPostRedisplay();
+    glutPostRedisplay();   
 }
 
+
+void idle()
+{   
+    if (animation && i < 7)
+    {
+        i++;
+        sleep(3);
+    }
+    if (i > 6)
+    {
+        animation = 0;
+        i = 0;
+    }
+    glutPostRedisplay();
+}
 
 /**
  * Init vertex data.
@@ -307,6 +345,7 @@ void initData()
     // Unbind Vertex Array Object.
     glBindVertexArray(0);
     
+    
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -339,6 +378,7 @@ int main(int argc, char** argv)
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
+    glutIdleFunc(idle);
 
 	glutMainLoop();
 }
