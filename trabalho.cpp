@@ -21,9 +21,9 @@
 
 /* Globals */
 /** Window width. */
-int win_width  = 600;
+int win_width  = 800;
 /** Window height. */
-int win_height = 600;
+int win_height = 700;
 
 /** Program variable. */
 int program;
@@ -31,6 +31,12 @@ int program;
 unsigned int VAO;
 /** Vertex buffer object. */
 unsigned int VBO;
+/** Vertex array object. */
+unsigned int VAO1;
+/** Vertex buffer object. */
+unsigned int VBO1;
+/** Element buffer object */
+unsigned int EBO;
 
 /* variaveis para as cores dos cubos */
 float r[10], g[10], b[10];
@@ -45,6 +51,10 @@ float selfRotate = 0;
 
 /** light in cube*/
 float light = 0;
+
+/** move cube*/
+float inY = 0;
+float inX = 0;
 
 /** Vertex shader. */
 const char *vertex_code = "\n"
@@ -117,19 +127,19 @@ void initShaders(void);
  */
 void display()
 {
-    glClearColor(0.4, 0.3, 0.3, 1.0);
+    glClearColor(0.2, 0.3, 0.3, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(program);
     glBindVertexArray(VAO);
-
-	glm::mat4 Rx = glm::rotate(glm::mat4(1.0f), glm::radians(selfRotate + 10.0f), glm::vec3(1.0f,0.0f,0.0f));
-	glm::mat4 Ry = glm::rotate(glm::mat4(1.0f), glm::radians(selfRotate + -30.0f), glm::vec3(0.0f,1.0f,0.0f));
+    glLineWidth(7);
+	glm::mat4 Rx = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), glm::vec3(1.0f,0.0f,0.0f));
+	glm::mat4 Ry = glm::rotate(glm::mat4(1.0f), glm::radians(selfRotate + 65.0f), glm::vec3(0.0f,1.0f,0.0f));
 	glm::mat4 model = Rx*Ry;
 	unsigned int loc = glGetUniformLocation(program, "model");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model));
 
-	glm::mat4 projection = glm::perspective(glm::radians(zoom + 80.0f), (win_width/(float)win_height), 0.1f, 120.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(zoom + 90.0f), (win_width/(float)win_height), 0.1f, 120.0f);
  	loc = glGetUniformLocation(program, "projection");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(projection));
 
@@ -173,59 +183,74 @@ void display()
     unsigned int locView = glGetUniformLocation(program, "view");
 
     //primeiro cubo que irá começar a BFS
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, -5.0f));
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + -1.5f, inY + 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[0], g[0], b[0]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    
+    
 
     //cubos que são vizinhos do primeiro cubo
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, -5.0f));
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 0.0f, inY + 2.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[1], g[1], b[1]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_LINES, 37, 2);
 
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
+
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 0.0f, inY + 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[2], g[2], b[2]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_LINES, 41, 2);
 
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, -5.0f));
+
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 0.0f, inY + -2.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[3], g[3], b[3]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_LINES, 39, 2);
 
     //cubos que são vizinhos dos vizinhos do primeiro cubo
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 1.0f, -5.0f));
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 1.5f, inY + 2.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[4], g[4], b[4]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_LINES, 41, 2);
 
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.0f, -5.0f));
+
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 1.5f, inY + 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[5], g[5], b[5]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_LINES, 41, 2);
 
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, -1.0f, -5.0f));
+
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 1.5f, inY + -2.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[6], g[6], b[6]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_LINES, 41, 2);
 
     //Terceira coluna de cubos
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 1.0f, -5.0f));
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 3.0f, inY + 2.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[7], g[7], b[7]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_LINES, 41, 2);
 
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.0f, -5.0f));
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 3.0f, inY + 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[8], g[8], b[8]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_LINES, 41, 2);
 
-    view = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, -1.0f, -5.0f));
+    view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 3.0f, inY + -2.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[9], g[9], b[9]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-
+    glDrawArrays(GL_LINES, 41, 2);
+    
     glutSwapBuffers();
 }   
 
@@ -270,33 +295,66 @@ void keyboard(unsigned char key, int x, int y)
         case 'J':
             animation = 1;
             break;
-
+        //Zoom camera
         case 'z':
         case 'Z':
-            zoom += 2;
+            zoom -= 2;
             break;
 
         case 'x':
         case 'X':
-            zoom -= 2;
+            zoom += 2;
             break;
+        //Rodar o cubo ao redor dele mesmo    
         case 'r':
         case 'R':
             selfRotate += 2;
-            light += 0.5;
             break;
 
         case 't':
         case 'T':
             selfRotate -= 2;
-            light -= 0.5;
             break;
+        //Seta a posição inicial dos cubos
         case 'p':
         case 'P':
             zoom = 0;
             light = 0; 
             selfRotate = 0;
+            inX = 0;
+            inY = 0;
             break;
+        //Movimentar os cubos na tela
+        case 'w':
+        case 'W':
+            inY -= 0.5;
+            break;
+
+        case 's':
+        case 'S':
+            inY += 0.5;
+            break;
+
+        case 'a':
+        case 'A':
+            inX -= 0.5;
+            break;
+
+        case 'd':
+        case 'D':
+            inX += 0.5;
+            break;
+        //Light control
+        case 'l':
+        case 'L':
+            light += 0.5;
+            break;
+
+        case 'k':
+        case 'K':
+            light -= 0.5;
+            break;
+        
     }
     glutPostRedisplay();   
 }
@@ -381,12 +439,23 @@ void initData()
 
         -0.25f, -0.25f, -0.25f,  0.0f, -1.0f,  0.0f,
         0.25f, -0.25f, -0.25f,  0.0f, -1.0f,  0.0f,
-        0.25f, -0.25f,  0.25f,  0.0f, -1.0f,  0.0f
+        0.25f, -0.25f,  0.25f,  0.0f, -1.0f,  0.0f,
+
+        //Lines
+        0.25f, -0.25f, -0.25f,  0.0f, -1.0f,  0.0f,
+        -0.75f, -1.8f,  -1.5f,  0.0f, -1.0f,  0.0f,
+
+        0.25f, 0.25f, -0.25f,  0.0f, -1.0f,  0.0f,
+        -0.75f, 1.8f,  -1.5f,  0.0f, -1.0f,  0.0f,
+
+        0.25f, -0.25f, -0.25f,  0.0f, -1.0f,  0.0f,
+        -0.75f, 0.0f,  -1.5f,  0.0f, -1.0f,  0.0f,
     };
-    
+
     // Vertex array.
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
+    
 
     // Vertex buffer
     glGenBuffers(1, &VBO);
@@ -398,7 +467,6 @@ void initData()
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
-
     // Unbind Vertex Array Object.
     glBindVertexArray(0);
     
@@ -423,7 +491,7 @@ int main(int argc, char** argv)
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize(win_width,win_height);
-	glutCreateWindow(argv[0]);
+	glutCreateWindow("Trabalho Final - CIC270");
 	glewInit();
 
     // Init vertex data for the triangle.
