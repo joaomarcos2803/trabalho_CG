@@ -118,60 +118,64 @@ void display()
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(projection));
 
     // Light color.
-    // loc = glGetUniformLocation(program, "lightColor");
-    // glUniform3f(loc, 1.0, 1.0, 1.0);
-    	
-    // Light position.
-    // loc = glGetUniformLocation(program, "lightPosition");
-    // glUniform3f(loc, 1.0, 3.0, 2.0);
-    	
-    // // Camera position.
-    // loc = glGetUniformLocation(program, "cameraPosition");
-    // glUniform3f(loc, 0.0, 0.0, 0.0);
+    unsigned int locLight = glGetUniformLocation(program, "lightColor");
+    glUniform3f(locLight, 1.0, 1.0, 1.0);
 
-    // Object color.
-	unsigned int locColor = glGetUniformLocation(program, "objectColor");
+    //Light position.
+    loc = glGetUniformLocation(program, "lightPosition");
+    glUniform3f(loc, 1.0, 3.0, 2.0);
+    	
+    // Camera position.
+    loc = glGetUniformLocation(program, "cameraPosition");
+    glUniform3f(loc, 0.0, 0.0, 0.0);
+
+    //cor original
     //glUniform3f(locColor, 0.1, 0.1, 0.5);
 
-    loc = glGetUniformLocation(program, "view");
+    // Object color.
+    unsigned int locColor = glGetUniformLocation(program, "objectColor");
+
+    unsigned int locView = glGetUniformLocation(program, "view");
+
 
     //primeiro cubo que irá começar a BFS
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, -5.0f));
-	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(locColor, 1.0, 0.0, 0.0);
 
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, -5.0f));
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, 0.0, 1.0, 1.0);
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
     //cubos que são vizinhos do primeiro cubo
     view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
-	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(locColor, 0.0, 1.0, 0.0);
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, 1.0, 1.0, 0.0);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, -5.0f));
-	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view));
-
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, 1.0, 1.0, 0.0);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, -5.0f));
-	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view));
-
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, 1.0, 1.0, 0.0);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     //cubos que são vizinhos dos vizinhos do primeiro cubo
     view = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 1.0f, -5.0f));
-	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view));
-
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, 0.1, 0.1, 0.5);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     view = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, 0.0f, -5.0f));
-	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view));
-
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, 0.1, 0.1, 0.5);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     view = glm::translate(glm::mat4(1.0f), glm::vec3(1.5f, -1.0f, -5.0f));
-	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(view));
-
+	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(locColor, 0.1, 0.1, 0.5);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     glutSwapBuffers();

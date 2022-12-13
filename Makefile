@@ -2,8 +2,8 @@ CC = g++
 
 GLLIBS = -lglut -lGLEW -lGL
 
-all: phong.cpp
-	$(CC) phong.cpp ./lib/utils.cpp -o phong $(GLLIBS)
+all: trabalho.cpp
+	$(CC) trabalho.cpp ./lib/utils.cpp -o trabalho $(GLLIBS)
 
 clean:
-	rm -f ambient diffuse specular phong
+	rm -f trabalho
