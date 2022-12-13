@@ -32,18 +32,17 @@ unsigned int VAO;
 /** Vertex buffer object. */
 unsigned int VBO;
 
-
-/* variaveis para as cores dos cubos */
+/* cores dos cubos */
 float r[10], g[10], b[10];
 
+//controla a animação de mudar as cores dos cubos
 int i = 0;
+
+//0 - sem animação, 1 - DFS, 2 - BFS
 int animation = 0;
 
-/** Zoom camera */
+/** zoom camera */
 float zoom = 0;
-
-/** rotate cube*/
-float selfRotate = 0;
 
 /** light in cube*/
 float light = 0;
@@ -128,9 +127,9 @@ void display()
 
     glUseProgram(program);
     glBindVertexArray(VAO);
-    glLineWidth(7);
+    glLineWidth(10);
 	glm::mat4 Rx = glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), glm::vec3(1.0f,0.0f,0.0f));
-	glm::mat4 Ry = glm::rotate(glm::mat4(1.0f), glm::radians(selfRotate + 65.0f), glm::vec3(0.0f,1.0f,0.0f));
+	glm::mat4 Ry = glm::rotate(glm::mat4(1.0f), glm::radians(65.0f), glm::vec3(0.0f,1.0f,0.0f));
 	glm::mat4 model = Rx*Ry;
 	unsigned int loc = glGetUniformLocation(program, "model");
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(model));
@@ -170,7 +169,7 @@ void display()
             b[DFS[j]] = 0.0f;
         }
     }
-    
+
     //BFS
     else if (animation == 2)
     {
@@ -190,11 +189,7 @@ void display()
             b[j] = 1.0f;
         }
     }
-    
-    //ordem da BFS - 0 1 2 3 4 5 6 7 8 9
-    //ordem da DFS - 0 1 4 7 2 5 8 3 6 9
 
-    //DFS:
     //primeiro cubo que irá começar a BFS/DFS
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + -1.5f, inY + 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
@@ -297,11 +292,11 @@ void keyboard(unsigned char key, int x, int y)
     switch (key)
     {
         case 27:
-            glutLeaveMainLoop();
+            exit(0);
 
         case 'q':
         case 'Q':
-            glutLeaveMainLoop();
+            exit(0);
 
         //BFS
         case 'n':
@@ -326,23 +321,11 @@ void keyboard(unsigned char key, int x, int y)
             zoom += 2;
             break;
 
-        //Rodar o cubo ao redor dele mesmo    
-        case 'r':
-        case 'R':
-            selfRotate += 2;
-            break;
-
-        case 't':
-        case 'T':
-            selfRotate -= 2;
-            break;
-
         //Seta a posição inicial dos cubos
         case 'p':
         case 'P':
             zoom = 0;
             light = 0; 
-            selfRotate = 0;
             inX = 0;
             inY = 0;
             break;
@@ -465,7 +448,7 @@ void initData()
         0.25f, -0.25f, -0.25f,  0.0f, -1.0f,  0.0f,
         0.25f, -0.25f,  0.25f,  0.0f, -1.0f,  0.0f,
 
-        //Lines
+        //lines
         0.25f, -0.25f, -0.25f,  0.0f, -1.0f,  0.0f,
         -0.75f, -1.8f,  -1.5f,  0.0f, -1.0f,  0.0f,
 
@@ -480,7 +463,6 @@ void initData()
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
     
-
     // Vertex buffer
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
