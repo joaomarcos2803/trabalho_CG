@@ -1,6 +1,38 @@
+<p align="center">
+  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/joaomarcos2803/trabalho_CG?color=%2304D361">
+
+<img alt="Repository size" src="https://img.shields.io/github/repo-size/joaomarcos2803/trabalho_CG">
+
+<a href="https://github.com/joaomarcos2803/trabalho_CG/commits/main">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/darlosss/repime">
+  </a>
+
+<img alt="License" src="https://img.shields.io/badge/license-MIT-brightgreen">
+   <a href="https://github.com/joaomarcos2803/trabalho_CG/stargazers">
+    <img alt="Stargazers" src="https://img.shields.io/github/stars/joaomarcos2803/trabalho_CG?style=social">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/joaomarcos2803/trabalho_CG">
+    <img src="https://i.imgur.com/CGI4F1R.png" height="185" width="185" alt="OpenGL-logo" />
+  </a>
+</p>
+
+<p align="center">
+    <a href="https://learn.microsoft.com/pt-br/cpp/cpp/welcome-back-to-cpp-modern-cpp?view=msvc-170">
+        <img align="center" alt="C++" height="30" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg">
+    </a>
+    <a href="https://cmake.org/">
+        <img align="center" alt="Cmake" height="30" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cmake/cmake-original.svg">
+    </a>
+
+</p>
+
 # Grafos com OpenGl moderno
 
 Animação com OpenGl 3.3+ dos algoritmos de busca em largura e profundidade em grafos com linguagem C++.
+
 ---
 ## Sobre
 
