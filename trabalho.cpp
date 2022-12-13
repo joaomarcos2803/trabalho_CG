@@ -302,13 +302,13 @@ void keyboard(unsigned char key, int x, int y)
         case 'Q':
             exit(0);
 
-        //BFS
+        //DFS
         case 'n':
         case 'N':
             animation = 1;
             break;
         
-        //DFS
+        //BFS
         case 'm':
         case 'M':
             animation = 2;
