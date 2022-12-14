@@ -51,7 +51,7 @@ float light = 0;
 float inY = 0;
 float inX = -1;
 
-/** move cube*/
+/** cube and line scale*/
 float scale = 0;
 
 /** Vertex shader. */
@@ -194,7 +194,7 @@ void display()
         }
     }
     
-    //primeiro cubo que irá começar a BFS/DFS
+    //Primeiro cubo que irá começar a BFS/DFS
     glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + -1.5f, inY + 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[0], g[0], b[0]);
@@ -208,7 +208,6 @@ void display()
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDrawArrays(GL_LINES, 37, 2);
 
-
     view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 0.0f, inY + 0.0f, -5.0f));
 	glUniformMatrix4fv(locView, 1, GL_FALSE, glm::value_ptr(view));
     glUniform3f(locColor, r[2], g[2], b[2]);
@@ -221,6 +220,7 @@ void display()
     glUniform3f(locColor, r[3], g[3], b[3]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDrawArrays(GL_LINES, 39, 2);
+
 
     //Segunda coluna de cubos
     view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 1.5f, inY + 2.0f, -5.0f));
@@ -242,6 +242,7 @@ void display()
     glUniform3f(locColor, r[6], g[6], b[6]);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDrawArrays(GL_LINES, 41, 2);
+
 
     //Terceira coluna de cubos
     view = glm::translate(glm::mat4(1.0f), glm::vec3(inX + 3.0f, inY + 2.0f, -5.0f));
